@@ -2,16 +2,20 @@
 class Tree
   attr_accessor :children, :node_name
 
-  def initialize(name, val = {})
+  def initialize(name, data = {})
     @children = []
     @node_name = name
-    if(val.is_a?(Hash))
-      val.keys.each do |key|
-        children.push Tree.new(key, val[key])
+    if(data.is_a?(Hash))
+      data.keys.each do |key|
+        children.push Tree.new(key, data[key])
       end
+    elsif(data)
+      children.push(Tree.new(data,nil))
+    end
+  end
 
   def visit_all(&block)
-    vist &block
+    visit &block
     children.each {|c| c.visit_all &block}
   end
 
@@ -20,13 +24,15 @@ class Tree
   end
 end
 
-begin
-  ruby_tree = Tree.new( "Ruby", [Tree.new("Reia"), Tree.new("MacRuby")] )
+
+  ruby_tree = Tree.new( "Ruby", {
+    "rubi":"ruby",
+    "wasser":"water"
+    })
 
   puts "Visiting a node"
   ruby_tree.visit {|node| puts node.node_name}
   puts
 
-  puts "visiting entire tree"
-  ruby_tree.visit_all {|node| puts node.node_name}9
-end
+  puts "Visiting the entire tree"
+  ruby_tree.visit_all {|node| puts node.node_name}
